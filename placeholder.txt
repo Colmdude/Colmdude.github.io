@@ -1,0 +1,1 @@
+Add your photos and videos to this folder, then update media.json with the filenames.
