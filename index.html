@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coleman Calmus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #E8671A;
+      --orange-dim: #a84a10;
+      --black: #050505;
+      --surface: #0e0e0e;
+      --border: #1e1e1e;
+      --text: #c9c0b4;
+      --text-dim: #5a5450;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 48px;
+      background: linear-gradient(to bottom, rgba(5,5,5,0.98) 60%, transparent);
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: 0.18em;
+      color: var(--orange);
+      text-shadow: 0 0 40px rgba(232,103,26,0.4);
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .page-top-spacer { height: 120px; }
+
+    /* ── GALLERY ── */
+    #gallery-section {
+      padding: 40px 32px 80px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .gallery-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--orange-dim);
+    }
+
+    #media-count {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+    }
+
+    .gallery-grid {
+      columns: 3 280px;
+      gap: 10px;
+    }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--surface);
+    }
+
+    .gallery-item img,
+    .gallery-item video {
+      width: 100%;
+      display: block;
+      transition: transform 0.6s ease, opacity 0.3s;
+      opacity: 0.88;
+    }
+
+    .gallery-item:hover img,
+    .gallery-item:hover video {
+      transform: scale(1.03);
+      opacity: 1;
+    }
+
+    .gallery-item .item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(5,5,5,0.5) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .gallery-item:hover .item-overlay { opacity: 1; }
+
+    .video-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(5,5,5,0.7);
+      border: 1px solid var(--border);
+      color: var(--orange);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-dim);
+    }
+
+    .empty-state p {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      line-height: 2;
+    }
+
+    .empty-state a {
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(5,5,5,0.96);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox-inner {
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .lightbox-inner img,
+    .lightbox-inner video {
+      max-width: 90vw;
+      max-height: 88vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 32px; right: 40px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      z-index: 1000;
+      font-family: 'Josefin Sans', sans-serif;
+      letter-spacing: 0.1em;
+    }
+
+    .lightbox-close:hover { color: var(--orange); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer p {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      header { padding: 20px 24px; }
+      #gallery-section { padding: 30px 16px 60px; }
+      footer { padding: 32px 24px; }
+      .gallery-grid { columns: 2 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Coleman Calmus</div>
+  </header>
+
+  <div class="page-top-spacer"></div>
+
+  <!-- GALLERY -->
+  <section id="gallery-section">
+    <div class="gallery-header">
+      <div class="section-label">Portfolio</div>
+      <div id="media-count"></div>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="empty-state" id="emptyState">
+        <p>No photos yet.<br>Add files to your <a href="https://github.com" target="_blank">GitHub repo</a> to get started.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© Coleman Calmus</p>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕ Close</button>
+    <div class="lightbox-inner" id="lightboxContent"></div>
+  </div>
+
+  <script>
+    const galleryGrid     = document.getElementById('galleryGrid');
+    const emptyState      = document.getElementById('emptyState');
+    const mediaCount      = document.getElementById('media-count');
+    const lightbox        = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+    const lightboxClose   = document.getElementById('lightboxClose');
+
+    const VIDEO_EXTS = ['mp4', 'mov', 'webm', 'ogg', 'avi'];
+
+    function isVideo(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      return VIDEO_EXTS.includes(ext);
+    }
+
+    async function loadGallery() {
+      try {
+        const res = await fetch('media.json');
+        if (!res.ok) throw new Error('media.json not found');
+        const files = await res.json();
+
+        if (!files.length) return;
+        emptyState.style.display = 'none';
+        mediaCount.textContent = `${files.length} item${files.length !== 1 ? 's' : ''}`;
+
+        files.forEach(filename => {
+          const path = `media/${filename}`;
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+
+          const overlay = document.createElement('div');
+          overlay.className = 'item-overlay';
+          item.appendChild(overlay);
+
+          if (isVideo(filename)) {
+            const vid = document.createElement('video');
+            vid.src = path;
+            vid.muted = true;
+            vid.loop = true;
+            vid.playsInline = true;
+            item.addEventListener('mouseenter', () => vid.play());
+            item.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
+            item.addEventListener('click', () => openLightbox(path, true));
+            const badge = document.createElement('div');
+            badge.className = 'video-badge';
+            badge.textContent = 'Video';
+            item.appendChild(vid);
+            item.appendChild(badge);
+          } else {
+            const img = document.createElement('img');
+            img.src = path;
+            img.alt = filename;
+            img.loading = 'lazy';
+            item.addEventListener('click', () => openLightbox(path, false));
+            item.appendChild(img);
+          }
+
+          galleryGrid.appendChild(item);
+        });
+      } catch (err) {
+        console.warn('Could not load media.json:', err.message);
+      }
+    }
+
+    function openLightbox(url, isVid) {
+      lightboxContent.innerHTML = '';
+      if (isVid) {
+        const vid = document.createElement('video');
+        vid.src = url;
+        vid.controls = true;
+        vid.autoplay = true;
+        lightboxContent.appendChild(vid);
+      } else {
+        const img = document.createElement('img');
+        img.src = url;
+        lightboxContent.appendChild(img);
+      }
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      lightboxContent.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    loadGallery();
+  </script>
+</body>
+</html>
