@@ -5,9 +5,31 @@
 // ════════════════════════════════════════════════
 
 const photos = [
-  'photos/photo1.jpg',
-  // 'photos/photo2.jpg',
-  // 'photos/photo3.jpg',
+  'Photos/BRDWY.JPG',
+  'Photos/BRDWY2.JPG',
+  'Photos/BUS1.JPG',
+  'Photos/CAVE1.JPG',
+  'Photos/CAVE2.JPG',
+  'Photos/CLMNCAMCORDER.JPG',
+  'Photos/HOUSE.JPG',
+  'Photos/IMG_0337.JPG',
+  'Photos/IMG_4436.jpeg',
+  'Photos/IMG_4991.JPG',
+  'Photos/IMG_4994.JPG',
+  'Photos/IMG_5220.jpeg',
+  'Photos/IMG_5223.JPG',
+  'Photos/IMG_5275.jpeg',
+  'Photos/IMG_8823.jpeg',
+  'Photos/IMG_8826.jpeg',
+  'Photos/IMG_8828.jpeg',
+  'Photos/IMG_8843.jpeg',
+  'Photos/IMG_9813.JPG',
+  'Photos/PWRLN.JPG',
+  'Photos/QUARRY2.JPG',
+  'Photos/RIVER1.JPG',
+  'Photos/SPIDER.JPG',
+  'Photos/TODD.JPG',
+  'Photos/photo1.jpg',
 ];
 
 // ════════════════════════════════════════════════
