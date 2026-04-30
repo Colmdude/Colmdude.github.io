@@ -41,20 +41,27 @@ section { margin-bottom: 64px; }
   margin-bottom: 20px;
 }
 
-/* ── Grid ── */
+/* ── Collage ── */
 .grid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  columns: 3;
+  column-gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .grid { columns: 2; }
+}
+
+@media (max-width: 440px) {
+  .grid { columns: 1; }
 }
 
 /* ── Photos ── */
 .grid-photo {
   width: 100%;
-  max-width: 900px;
   height: auto;
   display: block;
+  margin-bottom: 16px;
+  break-inside: avoid;
   cursor: pointer;
   transition: opacity 0.2s;
 }
