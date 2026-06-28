@@ -13,7 +13,6 @@ header {
 }
 
 .name {
-  font-family: 'Barlow', sans-serif;
   font-size: 3rem;
   font-weight: 300;
   letter-spacing: 0.3em;
@@ -32,7 +31,6 @@ main {
 section { margin-bottom: 64px; }
 
 .section-label {
-  font-family: 'Barlow', sans-serif;
   font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.3em;
@@ -41,35 +39,12 @@ section { margin-bottom: 64px; }
   margin-bottom: 20px;
 }
 
-/* ── Collage ── */
+/* ── Desktop: Masonry collage ── */
 .grid {
   columns: 3;
   column-gap: 16px;
 }
 
-@media (max-width: 700px) {
-  .grid {
-    columns: unset;
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .grid::-webkit-scrollbar { display: none; }
-
-  .grid-photo {
-    width: auto;
-    height: 260px;
-    flex-shrink: 0;
-    margin-bottom: 0;
-  }
-}
-
-/* ── Photos ── */
 .grid-photo {
   width: 100%;
   height: auto;
@@ -82,16 +57,44 @@ section { margin-bottom: 64px; }
 
 .grid-photo:hover { opacity: 0.85; }
 
-/* ── Videos ── */
-.grid-video {
-  width: calc(50% - 6px);
-  aspect-ratio: 16/9;
-  display: block;
-  background: #111;
-}
+/* ── Mobile: Carousel ── */
+.carousel { display: none; }
 
 @media (max-width: 700px) {
-  .grid-video { width: 100%; }
+  .grid { display: none; }
+  .carousel {
+    display: block;
+    overflow: hidden;
+    padding: 24px 0 40px;
+    position: relative;
+  }
+
+  .carousel-track {
+    display: flex;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    width: 75vw;
+    flex-shrink: 0;
+    padding: 0 8px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.82);
+    opacity: 0.45;
+  }
+
+  .carousel-slide.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 2px;
+  }
 }
 
 /* ── Lightbox ── */
