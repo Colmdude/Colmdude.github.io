@@ -48,11 +48,25 @@ section { margin-bottom: 64px; }
 }
 
 @media (max-width: 700px) {
-  .grid { columns: 2; }
-}
+  .grid {
+    columns: unset;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
 
-@media (max-width: 440px) {
-  .grid { columns: 1; }
+  .grid::-webkit-scrollbar { display: none; }
+
+  .grid-photo {
+    width: auto;
+    height: 260px;
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
 }
 
 /* ── Photos ── */
