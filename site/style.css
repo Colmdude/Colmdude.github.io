@@ -29,7 +29,7 @@ body {
 .top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
   padding: 24px 16px 16px;
 }
@@ -61,7 +61,7 @@ body {
 }
 
 .contact-panel {
-  position: fixed; inset: auto; top: 90px; right: 16px; margin: 0;
+  position: fixed; inset: auto; top: 76px; right: 16px; margin: 0;
   min-width: 220px; padding: 16px 20px;
   border: 1px solid #ddd; background: #fff; color: var(--text);
   box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
@@ -123,7 +123,14 @@ main { flex: 1; min-height: 0; padding: 0 var(--gap); }
   .name { letter-spacing: .2em; font-size: 1.05rem; }
   .contact-btn { letter-spacing: .2em; }
   .tagline { margin-top: 4px; font-size: 0.65rem; letter-spacing: .2em; }
-  .contact-panel { top: 62px; right: 12px; }
+  .contact-panel { top: 54px; right: 12px; }
+}
+
+/* Open just below the button (8px gap), right edges aligned. Browsers without anchor
+   positioning keep the fixed top/right above, which are set to land at the same spot. */
+@supports (top: anchor(bottom)) {
+  .contact-btn { anchor-name: --contact; }
+  .contact-panel { position-anchor: --contact; top: calc(anchor(bottom) + 8px); right: anchor(right); }
 }
 
 /* Lightbox (native <dialog>: focus trap and Esc come for free) */
