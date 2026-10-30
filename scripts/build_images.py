@@ -2,7 +2,7 @@
 """Build the site's images from originals/.
 
 Usage (from the project root):  python3 scripts/build_images.py
-Needs:  pip install Pillow
+Needs:  pip install Pillow, and exiftool (brew install exiftool)
 
 Every image in originals/ appears on the site. content/photos.json is optional:
 it only adds alt text, a caption, a slug or the order for photos you list in it.
@@ -12,14 +12,15 @@ filename cleaned up as alt text.
 Reads   originals/<file>              (never modified)
 Reads   content/photos.json           (optional: src, slug, alt, caption)
 Writes  site/img/<slug>-<width>.webp  (grid thumbnails, EXIF/GPS stripped)
-Writes  site/full/<slug>.<ext>        (byte-for-byte copy of the original, for the lightbox;
-                                       metadata is NOT stripped from these)
+Writes  site/full/<slug>.<ext>        (copy of the original for the lightbox: same pixels, not
+                                       re-encoded, only the GPS tags removed; other EXIF is kept)
 Writes  the gallery markup into site/index.html between the GALLERY markers
 """
 import html
 import json
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -69,6 +70,25 @@ def write_gallery(manifest):
     page.write_text(new)
 
 
+def strip_gps(path):
+    """Remove only the GPS tags from a copy, in place, without re-encoding the image."""
+    subprocess.run(
+        ["exiftool", "-q", "-P", "-overwrite_original", "-gps:all=", "-xmp:gps*=", str(path)],
+        check=True,
+    )
+
+
+def files_with_gps():
+    """Names of files in site/full/ that still carry GPS coordinates."""
+    out = subprocess.run(
+        ["exiftool", "-q", "-if", "$GPSLatitude or $GPSLongitude", "-p", "$FileName", str(FULL)],
+        capture_output=True, text=True,
+    )
+    if out.returncode not in (0, 2):  # exiftool exits 2 when no file matched the -if condition
+        sys.exit(f"exiftool failed while checking site/full/: {out.stderr.strip()}")
+    return out.stdout.split()
+
+
 def slugify(text):
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "photo"
 
@@ -113,6 +133,8 @@ def collect():
 
 
 def main():
+    if not shutil.which("exiftool"):
+        sys.exit("exiftool is required to strip GPS from site/full/. Install it: brew install exiftool")
     OUT.mkdir(parents=True, exist_ok=True)
     FULL.mkdir(parents=True, exist_ok=True)
     manifest, wanted, wanted_full = [], set(), set()
@@ -123,9 +145,9 @@ def main():
         full_name = f"{e['slug']}{ext}"
         wanted_full.add(full_name)
         full_path = FULL / full_name
-        if (not full_path.exists() or full_path.stat().st_size != src.stat().st_size
-                or full_path.stat().st_mtime < src.stat().st_mtime):
-            shutil.copy2(src, full_path)  # untouched bytes, metadata included
+        if not full_path.exists() or full_path.stat().st_mtime < src.stat().st_mtime:
+            shutil.copy2(src, full_path)  # keeps the original's modified time
+            strip_gps(full_path)          # -P keeps that time too, so this runs once per photo
 
         with Image.open(src) as im:
             im = ImageOps.exif_transpose(im).convert("RGB")  # fixes rotation, drops metadata
@@ -150,6 +172,10 @@ def main():
     for old in FULL.iterdir():  # same for copies in site/full/ (never touches originals/)
         if old.is_file() and old.name not in wanted_full:
             old.unlink()
+
+    leaked = files_with_gps()
+    if leaked:
+        sys.exit(f"GPS tags still present in site/full/: {', '.join(leaked)}")
 
     write_gallery(manifest)
     thumbs = sum(p.stat().st_size for p in OUT.glob("*.webp"))
