@@ -1,0 +1,118 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: #060d1f;
+  color: #fff;
+}
+
+/* ── Header ── */
+header {
+  padding: 48px 0 32px;
+  text-align: center;
+}
+
+.name {
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ff8c00;
+}
+
+/* ── Sections ── */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  text-align: center;
+}
+
+section { margin-bottom: 64px; }
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ff8c00;
+  margin-bottom: 20px;
+}
+
+/* ── Desktop: Masonry collage ── */
+.grid {
+  columns: 3;
+  column-gap: 16px;
+}
+
+.grid-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 16px;
+  break-inside: avoid;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.grid-photo:hover { opacity: 0.85; }
+
+/* ── Mobile: Carousel ── */
+.carousel { display: none; }
+
+@media (max-width: 700px) {
+  .grid { display: none; }
+  .carousel {
+    display: block;
+    overflow: hidden;
+    padding: 24px 0 40px;
+    position: relative;
+  }
+
+  .carousel-track {
+    display: flex;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    width: 75vw;
+    flex-shrink: 0;
+    padding: 0 8px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.82);
+    opacity: 0.45;
+  }
+
+  .carousel-slide.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 2px;
+  }
+}
+
+/* ── Lightbox ── */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 100;
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+}
+
+#lightbox.open { display: flex; }
+
+#lightbox-img {
+  max-width: 92vw;
+  max-height: 92vh;
+  object-fit: contain;
+}
