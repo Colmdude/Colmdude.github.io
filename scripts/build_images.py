@@ -45,9 +45,9 @@ def tile(i, m):
     alt = html.escape(m["alt"], quote=True)
     cap = html.escape(m.get("caption", ""), quote=True)
     return (
-        f'      <button class="tile" type="button" data-full="{full}" data-caption="{cap}" aria-label="Open photo: {alt}">\n'
+        f'      <button class="tile" type="button" style="--ar:{m["width"] / m["height"]:.4f}" data-full="{full}" data-caption="{cap}" aria-label="Open photo: {alt}">\n'
         f'        <img src="img/{m["slug"]}-{mid}.webp" srcset="{srcset}" '
-        f'sizes="(max-width: 700px) 50vw, (max-width: 1100px) 33vw, 380px" '
+        f'sizes="(max-width: 700px) 50vw, 33vw" '
         f'width="{m["width"]}" height="{m["height"]}" alt="{alt}" '
         f'{prio}loading="{loading}" decoding="async">\n'
         f'      </button>'
