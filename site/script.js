@@ -3,6 +3,18 @@
 (function () {
   'use strict';
 
+  // Tapping outside the contact panel only closes it; it must not also open the photo under it.
+  var panel = document.getElementById('contact-panel');
+  var swallow = false;
+  if (panel) {
+    document.addEventListener('pointerdown', function (e) {
+      swallow = panel.matches(':popover-open') && !panel.contains(e.target) && !e.target.closest('.contact-btn');
+    }, true);
+    document.addEventListener('click', function (e) {
+      if (swallow) { swallow = false; e.stopPropagation(); e.preventDefault(); }
+    }, true);
+  }
+
   // lanes split the photos up, so put them back in their original order for next/prev
   var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile'))
     .sort(function (a, b) { return a.dataset.i - b.dataset.i; });
