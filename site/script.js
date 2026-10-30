@@ -43,8 +43,10 @@
     if (box.open) box.close();
   }
 
-  tiles.forEach(function (tile, i) {
-    tile.addEventListener('click', function () { open(i); });
+  // one listener on the roll, so the repeated copies of the gallery work too
+  (document.getElementById('reel') || document).addEventListener('click', function (e) {
+    var tile = e.target.closest && e.target.closest('.tile');
+    if (tile) open(+tile.dataset.i);
   });
 
   // turn the mouse wheel into sideways scrolling on the photo roll
@@ -90,4 +92,40 @@
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(index + (dx < 0 ? 1 : -1));
   });
   box.addEventListener('pointercancel', function () { startX = startY = null; });
+})();
+
+// Endless roll: three copies of the gallery side by side; when the scroll position passes
+// into the third (or before the first) copy it jumps one copy back (or forward), unseen.
+(function () {
+  'use strict';
+  var reel = document.getElementById('reel');
+  var first = document.getElementById('gallery');
+  if (!reel || !first) return;
+  [1, 2].forEach(function () {
+    var c = first.cloneNode(true);
+    c.removeAttribute('id');
+    c.setAttribute('aria-hidden', 'true');
+    c.querySelectorAll('.tile').forEach(function (t) { t.tabIndex = -1; });
+    reel.appendChild(c);
+  });
+  reel.classList.add('looping');
+  var setW = 0;
+  function measure() {
+    setW = first.getBoundingClientRect().width + parseFloat(getComputedStyle(first).marginRight || 0);
+  }
+  function wrap() {
+    if (!setW) return;
+    if (reel.scrollLeft >= 2 * setW) reel.scrollLeft -= setW;
+    else if (reel.scrollLeft <= 0) reel.scrollLeft += setW;
+  }
+  measure();
+  reel.scrollLeft = setW;
+  reel.addEventListener('scroll', wrap, { passive: true });
+  if (window.ResizeObserver) {
+    new ResizeObserver(function () {
+      var pos = setW ? (reel.scrollLeft - setW) / setW : 0;
+      measure();
+      reel.scrollLeft = setW + pos * setW;
+    }).observe(first);
+  }
 })();

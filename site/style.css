@@ -29,7 +29,7 @@ body {
 .top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 16px;
   padding: 24px 16px 16px;
 }
@@ -61,7 +61,7 @@ body {
 }
 
 .contact-panel {
-  position: fixed; inset: auto; top: 76px; right: 16px; margin: 0;
+  position: fixed; inset: auto; top: 96px; right: 16px; margin: 0;
   min-width: 220px; padding: 16px 20px;
   border: 1px solid #ddd; background: #fff; color: var(--text);
   box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
@@ -74,7 +74,7 @@ body {
    (width/height) fixes its width once its height is set by the lane. */
 main { flex: 1; min-height: 0; padding: 0 var(--gap); }
 
-.reel { height: 100%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; }
+.reel { height: 100%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; container-type: size; }
 
 .gallery {
   display: flex;
@@ -89,7 +89,8 @@ main { flex: 1; min-height: 0; padding: 0 var(--gap); }
 .tile {
   flex: none;
   height: 100%;
-  aspect-ratio: var(--ar);
+  /* lane height = (reel height - scrollbar room - 2 gaps) / 3; width follows from the photo's ratio */
+  width: calc(var(--ar) * (100cqh - 10px - 2 * var(--gap)) / 3);
   margin: 0;
   padding: 0;
   border: 0;
@@ -97,6 +98,11 @@ main { flex: 1; min-height: 0; padding: 0 var(--gap); }
   cursor: zoom-in;
   -webkit-tap-highlight-color: transparent;
 }
+
+.reel.looping { display: flex; scrollbar-width: none; }
+.reel.looping::-webkit-scrollbar { display: none; }
+.reel.looping .gallery { flex: none; margin-right: 96px; }
+@media (max-width: 700px) { .reel.looping .gallery { margin-right: 48px; } }
 
 .tile img {
   display: block;
@@ -123,7 +129,7 @@ main { flex: 1; min-height: 0; padding: 0 var(--gap); }
   .name { letter-spacing: .2em; font-size: 1.05rem; }
   .contact-btn { letter-spacing: .2em; }
   .tagline { margin-top: 4px; font-size: 0.65rem; letter-spacing: .2em; }
-  .contact-panel { top: 54px; right: 12px; }
+  .contact-panel { top: 60px; right: 12px; }
 }
 
 /* Open just below the button (8px gap), right edges aligned. Browsers without anchor
