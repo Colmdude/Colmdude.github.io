@@ -39,25 +39,41 @@ def tile(i, m):
     srcset = ", ".join(f"img/{m['slug']}-{w}.webp {w}w" for w in sizes)
     mid = min(sizes, key=lambda w: abs(w - 960))
     full = f"full/{m['slug']}{m['ext']}"
-    eager = i < 4  # first few load immediately, the rest lazily
+    eager = i < 6  # first few load immediately, the rest lazily
     prio = 'fetchpriority="high" ' if i == 0 else ""
     loading = "eager" if eager else "lazy"
     alt = html.escape(m["alt"], quote=True)
     cap = html.escape(m.get("caption", ""), quote=True)
     return (
-        f'      <button class="tile" type="button" style="--ar:{m["width"] / m["height"]:.4f}" data-full="{full}" data-caption="{cap}" aria-label="Open photo: {alt}">\n'
-        f'        <img src="img/{m["slug"]}-{mid}.webp" srcset="{srcset}" '
-        f'sizes="(max-width: 700px) 50vw, 33vw" '
+        f'        <button class="tile" type="button" data-i="{i}" style="--ar:{m["width"] / m["height"]:.4f}" data-full="{full}" data-caption="{cap}" aria-label="Open photo: {alt}">\n'
+        f'          <img src="img/{m["slug"]}-{mid}.webp" srcset="{srcset}" '
+        f'sizes="(max-width: 700px) 60vw, 40vw" '
         f'width="{m["width"]}" height="{m["height"]}" alt="{alt}" '
         f'{prio}loading="{loading}" decoding="async">\n'
-        f'      </button>'
+        f'        </button>'
     )
+
+
+LANES = 3
+
+
+def lanes(manifest):
+    """Deal photos, in order, into LANES lists: each goes to the lane with the least total
+    width/height so far, so the rows end up about the same length."""
+    out, totals = [[] for _ in range(LANES)], [0.0] * LANES
+    for i, m in enumerate(manifest):
+        k = totals.index(min(totals))
+        out[k].append(tile(i, m))
+        totals[k] += m["width"] / m["height"]
+    return out
 
 
 def write_gallery(manifest):
     page = ROOT / "site" / "index.html"
     text = page.read_text()
-    body = "\n".join(tile(i, m) for i, m in enumerate(manifest))
+    body = "\n".join(
+        '      <div class="lane">\n' + "\n".join(tiles) + "\n      </div>" for tiles in lanes(manifest)
+    )
     new, n = re.subn(
         r"(<!-- GALLERY:START -->\n).*?(<!-- GALLERY:END -->)",
         lambda m: m.group(1) + body + "\n" + m.group(2),
