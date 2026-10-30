@@ -3,7 +3,9 @@
 (function () {
   'use strict';
 
-  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile'));
+  // lanes split the photos up, so put them back in their original order for next/prev
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile'))
+    .sort(function (a, b) { return a.dataset.i - b.dataset.i; });
   var box = document.getElementById('lightbox');
   var img = document.getElementById('lb-img');
   var cap = document.getElementById('lb-cap');
@@ -32,6 +34,16 @@
   tiles.forEach(function (tile, i) {
     tile.addEventListener('click', function () { open(i); });
   });
+
+  // turn the mouse wheel into sideways scrolling on the photo roll
+  var reel = document.getElementById('reel');
+  if (reel) {
+    reel.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // already sideways (trackpad)
+      reel.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }, { passive: false });
+  }
 
   box.querySelector('.lb-close').addEventListener('click', close);
   box.querySelector('.lb-prev').addEventListener('click', function () { show(index - 1); });
