@@ -3,7 +3,6 @@
   --text: #111;
   --muted: #777;
   --gap: 4px;
-  --row: 240px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,6 +14,10 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-text-size-adjust: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .visually-hidden {
@@ -23,7 +26,13 @@ body {
 }
 
 /* Header */
-.top { padding: 40px 16px 32px; text-align: center; }
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 24px 16px 16px;
+}
 
 .name {
   font-size: clamp(1.25rem, 5vw, 2rem);
@@ -31,8 +40,6 @@ body {
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--text);
-  /* trailing letter-space would push the name off-centre */
-  padding-left: 0.35em;
 }
 
 .tagline {
@@ -42,20 +49,41 @@ body {
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-left: 0.3em;
 }
 
-/* Gallery: justified rows. Each tile's --ar (width/height) sets its share of a row;
-   the empty ::after soaks up the spare space so a short last row is not stretched. */
-main { padding: 0 var(--gap) var(--gap); }
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
 
-.gallery { display: flex; flex-wrap: wrap; gap: var(--gap); }
-.gallery::after { content: ""; flex-grow: 1000000; }
+.contact a { color: inherit; text-decoration: none; }
+.contact a:hover, .contact a:focus-visible { color: var(--text); }
+
+/* Gallery: a sideways roll of 3 lanes that fills the screen height. Each tile's --ar
+   (width/height) fixes its width once its height is set by the lane. */
+main { flex: 1; min-height: 0; padding: 0 var(--gap); }
+
+.reel { height: 100%; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; }
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  height: calc(100% - 10px); /* leaves room for the scrollbar */
+  width: max-content;
+}
+
+.lane { display: flex; gap: var(--gap); flex: 1; min-height: 0; }
 
 .tile {
-  flex-grow: var(--ar);
-  flex-basis: calc(var(--ar) * var(--row));
-  display: block;
+  flex: none;
+  height: 100%;
+  aspect-ratio: var(--ar);
   margin: 0;
   padding: 0;
   border: 0;
@@ -64,12 +92,11 @@ main { padding: 0 var(--gap) var(--gap); }
   -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 700px) { :root { --row: 150px; } }
-
 .tile img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   transition: opacity 0.2s;
 }
 
@@ -78,12 +105,18 @@ main { padding: 0 var(--gap) var(--gap); }
 
 /* Footer */
 .foot {
-  padding: 32px 16px 48px;
+  padding: 6px 16px 10px;
   text-align: center;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
+}
+
+@media (max-width: 700px) {
+  .top { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 12px 10px; }
+  .name { font-size: 1.1rem; letter-spacing: 0.25em; }
+  .tagline { margin-top: 4px; font-size: 0.65rem; }
+  .contact { flex-direction: row; gap: 14px; align-items: baseline; font-size: 0.75rem; }
 }
 
 /* Lightbox (native <dialog>: focus trap and Esc come for free) */
